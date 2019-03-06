@@ -110,7 +110,7 @@ class token:
 			# Acquire the buffer lock
 			self._bufferLock.acquire()
 
-			# Never enqueue for IRC clients or Foka
+			# Never enqueue for IRC clients or Bot
 			if self.irc or self.userID < 999:
 				return
 
@@ -386,7 +386,7 @@ class token:
 
 		:param seconds: silence length in seconds. If None, get it from db. Default: None
 		:param reason: silence reason. Default: empty string
-		:param author: userID of who has silenced the user. Default: 999 (FokaBot)
+		:param author: userID of who has silenced the user. Default: 999 (Your Bot Name lol)
 		:return:
 		"""
 		if seconds is None:
@@ -487,7 +487,7 @@ class token:
 		:return:
 		"""
 		self.restricted = True
-		chat.sendMessage("FokaBot", self.username, "Your account is currently in restricted mode. Please visit ripple's website for more information.")
+		chat.sendMessage(glob.BOT_NAME, self.username, "Your account is currently in restricted mode. Please visit ripple's website for more information.")
 
 	def resetRestricted(self):
 		"""
@@ -496,7 +496,7 @@ class token:
 
 		:return:
 		"""
-		chat.sendMessage("FokaBot", self.username, "Your account has been unrestricted! Please log in again.")
+		chat.sendMessage(glob.BOT_NAME, self.username, "Your account has been unrestricted! Please log in again.")
 
 	def joinStream(self, name):
 		"""

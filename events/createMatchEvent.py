@@ -20,7 +20,7 @@ def handle(userToken, packetData):
 		# Create a match object
 		# TODO: Player number check
 		matchID = glob.matches.createMatch(matchName, packetData["matchPassword"].strip(), packetData["beatmapID"], packetData["beatmapName"], packetData["beatmapMD5"], packetData["gameMode"], userID)
-
+		
 		# Make sure the match has been created
 		if matchID not in glob.matches.matches:
 			raise exceptions.matchCreateError()
@@ -29,6 +29,12 @@ def handle(userToken, packetData):
 			# Join that match
 			userToken.joinMatch(matchID)
 
+			# Multiplayer Room Patch
+			for i in range(0,16):
+				if match.slots[i].status is not 4:
+					match.slots[i].status = packetData["slot{}Status".format(i)]
+
+			
 			# Give host to match creator
 			match.setHost(userID)
 			match.sendUpdates()

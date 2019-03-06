@@ -257,8 +257,8 @@ def sendMessage(fro = "", to = "", message = "", token = None, toIRC = True):
 			#if recipientToken.tournament:
 			#	raise exceptions.userTournamentException()
 
-			# Make sure the recipient is not restricted or we are the bot
-			if recipientToken.restricted and fro.lower() != glob.BOT_NAME.lower():
+			# Make sure the recipient is not restricted or we are your bot
+			if recipientToken.restricted and fro.lower() != glob.BOT_NAME.lower:
 				raise exceptions.userRestrictedException()
 
 			# TODO: Make sure the recipient has not disabled PMs for non-friends or he's our friend
@@ -282,12 +282,12 @@ def sendMessage(fro = "", to = "", message = "", token = None, toIRC = True):
 					continue
 				glob.ircServer.banchoMessage(fro, to, line)
 
-		# Spam protection (ignore the bot)
+		# Spam protection (ignore your bot)
 		if token.userID > 999:
 			token.spamProtection()
 
-		# Some bot message
-		if isChannel or to.lower() == glob.BOT_NAME.lower():
+		# bot message
+		if isChannel or to.lower() == glob.BOT_NAME.lower:
 			fokaMessage = fokabot.fokabotResponse(token.username, to, message)
 			if fokaMessage:
 				sendMessage(glob.BOT_NAME, to if isChannel else fro, fokaMessage)
