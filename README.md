@@ -1,18 +1,15 @@
-## pep.py [![Code Health](https://landscape.io/github/osuripple/pep.py/master/landscape.svg?style=flat)](https://landscape.io/github/osuripple/pep.py/master)
+## pep.py
 
-- Origin: https://git.zxq.co/ripple/pep.py
-- Mirror: https://github.com/osuripple/pep.py
-
-This is Ripple's bancho server. It handles:
+This is Ripple's bancho server but osu!thailand forked edition. It handles:
 - Client login
 - Online users listing and statuses
 - Public and private chat
 - Spectator
 - Multiplayer
-- Fokabot
+- The Bot
 
 ## Requirements
-- Python 3.5
+- Python 3.6
 - Cython
 - C compiler
 - MySQLdb (`mysqlclient`)
