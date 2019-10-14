@@ -94,8 +94,12 @@ def userPanel(userID, force = False):
 	# Get username color according to rank
 	# Only admins and normal users are currently supported
 	userRank = 0
-	if username == "FokaBot":
+	if username == glob.BOT_NAME:
 		userRank |= userRanks.MOD
+	elif username == "Aoba":
+		userRank |= userRanks.PEPPY
+	elif username == "Natsue":
+		userRank |= userRanks.PEPPY
 	elif userUtils.isInPrivilegeGroup(userID, "developer"):
 		userRank |= userRanks.ADMIN
 	elif userUtils.isInPrivilegeGroup(userID, "chat mod"):

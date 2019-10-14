@@ -253,7 +253,7 @@ class match:
 		else:
 			newStatus = slotStatuses.LOCKED
 
-		# Send updated settings to kicked user, so he returns to lobby
+		# Send updated settings to kicked user, so THEY!!! (WTF RIPPLE??) returns to lobby
 		if self.slots[slotID].user is not None and self.slots[slotID].user in glob.tokens.tokens:
 			glob.tokens.tokens[self.slots[slotID].user].enqueue(serverPackets.updateMatch(self.matchID))
 
@@ -439,24 +439,24 @@ class match:
 		chanName = "#multi_{}".format(self.matchID)
 		if self.vinseID is None:
 			self.vinseID = (int(time.time()) // (60 * 15)) << 32 | self.matchID
-			chat.sendMessage("FokaBot", chanName, "Match history available [{} here]".format(
-				"https://vinse.ripple.moe/match/{}".format(self.vinseID)
+			chat.sendMessage(glob.BOT_NAME, chanName, "Match history available [{} here]".format(
+				"https://multi.bigtu.vip/match/{}".format(self.vinseID)
 			))
 		if not self.bloodcatAlert:
 			chat.sendMessage(
-				"FokaBot",
+				glob.BOT_NAME,
 				chanName,
-				"Oh by the way, in case you're playing unranked or broken maps "
+				"and uh... in case you're playing unranked or broken maps "
 				"that are now available through ripple's osu!direct, you can "
 				"type '!bloodcat' in the chat to get a download link for the "
-				"currently selected map from Bloodcat!"
+				"currently selected map from Bloodcat! or just use osu!direct !"
 			)
 			self.bloodcatAlert = True
 
 		# If this is a tournament match, then we send a notification in the chat
 		# saying that the match has completed.
 		if self.isTourney and (chanName in glob.channels.channels):
-			chat.sendMessage("FokaBot", chanName, "Match has just finished.")
+			chat.sendMessage(glob.BOT_NAME, chanName, "Match has just finished.")
 
 	def resetSlots(self):
 		for i in range(0,16):
@@ -686,9 +686,9 @@ class match:
 		if froToken is None or toToken is None:
 			return
 
-		# FokaBot is too busy
+		# BOT IS BUSY!!!
 		if to == 999:
-			chat.sendMessage("FokaBot", froToken.username, "I would love to join your match, but I'm busy keeping ripple up and running. Sorry. Beep Boop.")
+			chat.sendMessage(glob.BOT_NAME, froToken.username, "I would love to join your match, but I'm busy keeping the server up and running. Sorry. Beep Boop.")
 
 		# Send message
 		message = "Come join my multiplayer match: \"[osump://{}/{} {}]\"".format(self.matchID, self.matchPassword.replace(" ", "_"), self.matchName)
@@ -878,7 +878,7 @@ class match:
 		if totalUsers == 0:
 			message = "The match is now empty."
 
-		chat.sendMessage("FokaBot", chanName, message)
+		chat.sendMessage(glob.BOT_NAME, chanName, message)
 
 	def __enter__(self):
 		# 🌚🌚🌚🌚🌚

@@ -18,6 +18,8 @@ except:
 	VERSION = "Unknown"
 
 DATADOG_PREFIX = "peppy"
+BOT_NAME = "AC"
+# YOU CAN CHANGE TO YOUR BOT NAME! #
 application = None
 db = None
 redis = None
