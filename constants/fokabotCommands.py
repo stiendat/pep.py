@@ -1186,6 +1186,29 @@ def switchServer(fro, chan, message):
 	# userToken.kick()
 	return "{} has been connected to {}".format(target, newServer)
 
+def reloadConfig(fro, chan, message):
+	if chan.startswith("#"):
+		return
+	try:
+		if not glob.conf.reload():
+			return "Invalid configuration file structure. The new configuration file was not reloaded."
+	except Exception as e:
+		return "Unhandled exception while reloading the configuration file: {}".format(str(e))
+	return "Configuration file reloaded successfully"
+
+def delta(fro, chan, message):
+	if chan.startswith("#"):
+		return
+	if not glob.conf.config["server"]["deltaurl"].strip():
+		return "Delta is disabled."
+	userToken = glob.tokens.getTokenFromUserID(userUtils.getID(fro), ignoreIRC=True, _all=False)
+	if userToken is None:
+		return "You must be connected from a game client to switch to delta"
+	if not generalUtils.stringToBool(glob.conf.config["server"]["publicdelta"]) and not userToken.admin:
+		return "You can't use delta yet. Try again later."
+	userToken.enqueue(serverPackets.switchServer(glob.conf.config["server"]["deltaurl"]))
+	return "Connecting to delta..."
+
 def rtx(fro, chan, message):
 	target = message[0]
 	message = " ".join(message[1:]).strip()
@@ -1372,6 +1395,13 @@ commands = [
 	}, {
 		"trigger": "!bloodcat",
 		"callback": bloodcat
+	}, {
+		"trigger": "!delta",
+		"callback": delta
+	}, {
+		"trigger": "!reloadconfig",
+		"privileges": privileges.ADMIN_MANAGE_SERVERS,
+		"callback": reloadConfig
 	}
 	#
 	#	"trigger": "!acc",
