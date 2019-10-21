@@ -30,6 +30,15 @@ def bloodcatMessage(beatmapID):
 		beatmap["song_name"],
 	)
 
+def beatconnectMessage(beatmapID):
+	beatmap = glob.db.fetch("SELECT song_name, beatmapset_id FROM beatmaps WHERE beatmap_id = %s LIMIT 1", [beatmapID])
+	if beatmap is None:
+		return "Sorry, I'm not able to provide a download link for this map :("
+	return "Download [https://beatconnect.io/b/{} {}] from Beatconnect".format(
+		beatmap["beatmapset_id"],
+		beatmap["song_name"],
+	)
+	
 """
 Commands callbacks
 
@@ -56,10 +65,9 @@ def faq(fro, chan, message):
 		"swearing": "Please don't abuse swearing",
 		"spam": "Please don't spam",
 		"offend": "Please don't offend other players",
-		"github": "(osu!Ainu's Github page!)[https://github.com/osuripple/ripple]",
-		"discord": "(Join Ainu Discord!)[https://discord.gg/0rJcZruIsA6rXuIx]",
+		"github": "(osu!Ainu's Github page!)[https://github.com/osuthailand]",
+		"discord": "(Join Ainu Discord!)[https://discord.gg/cnaDpVY]",
 		"changelog": "Check the (changelog)[https://bigtu.vip/changelog] !",
-		"status": "Check the server status (here!)[https://status.bigtu.vip]",
 		"english": "Please keep this channel in english.",
 		"topic": "Can you please drop the topic and talk about something else?",
 		"lines": "Please try to keep your sentences on a single line to avoid getting silenced."
@@ -1186,29 +1194,6 @@ def switchServer(fro, chan, message):
 	# userToken.kick()
 	return "{} has been connected to {}".format(target, newServer)
 
-def reloadConfig(fro, chan, message):
-	if chan.startswith("#"):
-		return
-	try:
-		if not glob.conf.reload():
-			return "Invalid configuration file structure. The new configuration file was not reloaded."
-	except Exception as e:
-		return "Unhandled exception while reloading the configuration file: {}".format(str(e))
-	return "Configuration file reloaded successfully"
-
-def delta(fro, chan, message):
-	if chan.startswith("#"):
-		return
-	if not glob.conf.config["server"]["deltaurl"].strip():
-		return "Delta is disabled."
-	userToken = glob.tokens.getTokenFromUserID(userUtils.getID(fro), ignoreIRC=True, _all=False)
-	if userToken is None:
-		return "You must be connected from a game client to switch to delta"
-	if not generalUtils.stringToBool(glob.conf.config["server"]["publicdelta"]) and not userToken.admin:
-		return "You can't use delta yet. Try again later."
-	userToken.enqueue(serverPackets.switchServer(glob.conf.config["server"]["deltaurl"]))
-	return "Connecting to delta..."
-
 def rtx(fro, chan, message):
 	target = message[0]
 	message = " ".join(message[1:]).strip()
@@ -1242,7 +1227,27 @@ def bloodcat(fro, chan, message):
 		beatmapID = spectatorHostToken.beatmapID
 	return bloodcatMessage(beatmapID)
 
+def beatconnect(fro, chan, message):
+	try:
+		matchID = getMatchIDFromChannel(chan)
+	except exceptions.wrongChannelException:
+		matchID = None
+	try:
+		spectatorHostUserID = getSpectatorHostUserIDFromChannel(chan)
+	except exceptions.wrongChannelException:
+		spectatorHostUserID = None
 
+	if matchID is not None:
+		if matchID not in glob.matches.matches:
+			return "This match doesn't seem to exist... Or does it...?"
+		beatmapID = glob.matches.matches[matchID].beatmapID
+	else:
+		spectatorHostToken = glob.tokens.getTokenFromUserID(spectatorHostUserID, ignoreIRC=True)
+		if spectatorHostToken is None:
+			return "The spectator host is offline."
+		beatmapID = spectatorHostToken.beatmapID
+	return beatconnectMessage(beatmapID)
+	
 """
 Commands list
 
@@ -1396,12 +1401,8 @@ commands = [
 		"trigger": "!bloodcat",
 		"callback": bloodcat
 	}, {
-		"trigger": "!delta",
-		"callback": delta
-	}, {
-		"trigger": "!reloadconfig",
-		"privileges": privileges.ADMIN_MANAGE_SERVERS,
-		"callback": reloadConfig
+		"trigger": "!beatconnect",
+		"callback": beatconnect
 	}
 	#
 	#	"trigger": "!acc",
