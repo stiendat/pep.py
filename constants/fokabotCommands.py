@@ -39,6 +39,17 @@ def beatconnectMessage(beatmapID):
 		beatmap["song_name"],
 	)
 	
+def mirrorMessage(beatmapID):
+	beatmap = glob.db.fetch("SELECT song_name, beatmapset_id FROM beatmaps WHERE beatmap_id = %s LIMIT 1", [beatmapID])
+	if beatmap is None:
+		return "Sorry, I'm not able to provide a download link for this map :("
+	return "Download {} from [https://beatconnect.io/b/{} Beatconnect], [https://bloodcat.com/osu/s/{} Bloodcat] or [osu://dl/{} osu!direct].".format(
+		beatmap["song_name"],
+		beatmap["beatmapset_id"],
+		beatmap["beatmapset_id"],
+		beatmap["beatmapset_id"],
+	)
+	
 """
 Commands callbacks
 
@@ -470,13 +481,13 @@ def getPPMessage(userID, just_data = False):
 
 def tillerinoNp(fro, chan, message):
 	try:
-		# Bloodcat trigger for #spect_
+		# Mirror list trigger for #spect_
 		if chan.startswith("#spect_"):
 			spectatorHostUserID = getSpectatorHostUserIDFromChannel(chan)
 			spectatorHostToken = glob.tokens.getTokenFromUserID(spectatorHostUserID, ignoreIRC=True)
 			if spectatorHostToken is None:
 				return False
-			return bloodcatMessage(spectatorHostToken.beatmapID)
+			return mirrorMessage(spectatorHostToken.beatmapID)
 
 		# Run the command in PM only
 		if chan.startswith("#"):
@@ -772,7 +783,7 @@ def report(fro, chan, message):
 		chat.sendMessage(glob.BOT_NAME, "#admin", adminMsg)
 		log.warning(adminMsg, discord="cm")
 	except exceptions.invalidUserException:
-		msg = "Hello, {} here! You can't report me. I won't forget what you've tried to do. Watch out."
+		msg = "Hello, {} here! You can't report me. I won't forget what you've tried to do. Watch out.".format(glob.BOT_NAME)
 	except exceptions.invalidArgumentsException:
 		msg = "Invalid report command syntax. To report an user, click on it and select 'Report user'."
 	except exceptions.userNotFoundException:
@@ -1247,6 +1258,27 @@ def beatconnect(fro, chan, message):
 			return "The spectator host is offline."
 		beatmapID = spectatorHostToken.beatmapID
 	return beatconnectMessage(beatmapID)
+
+def mirror(fro, chan, message):
+	try:
+		matchID = getMatchIDFromChannel(chan)
+	except exceptions.wrongChannelException:
+		matchID = None
+	try:
+		spectatorHostUserID = getSpectatorHostUserIDFromChannel(chan)
+	except exceptions.wrongChannelException:
+		spectatorHostUserID = None
+
+	if matchID is not None:
+		if matchID not in glob.matches.matches:
+			return "This match doesn't seem to exist... Or does it...?"
+		beatmapID = glob.matches.matches[matchID].beatmapID
+	else:
+		spectatorHostToken = glob.tokens.getTokenFromUserID(spectatorHostUserID, ignoreIRC=True)
+		if spectatorHostToken is None:
+			return "The spectator host is offline."
+		beatmapID = spectatorHostToken.beatmapID
+	return mirrorMessage(beatmapID)
 	
 """
 Commands list
