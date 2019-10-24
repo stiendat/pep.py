@@ -197,7 +197,7 @@ class handler(requestsManager.asyncRequestHandler):
 			except exceptions.tokenNotFoundException:
 				# Token not found. Disconnect that user
 				responseData = serverPackets.loginError()
-				responseData += serverPackets.notification("Whoops! Something went wrong, please login again.")
+				responseData += serverPackets.notification("Oh no! Ainu have something wrong at the moment... Maybe try login again?")
 				log.warning("Received packet from unknown token ({}).".format(requestTokenString))
 				log.info("{} has been disconnected (invalid token)".format(requestTokenString))
 			finally:
@@ -243,24 +243,9 @@ class handler(requestsManager.asyncRequestHandler):
 	@tornado.web.asynchronous
 	@tornado.gen.engine
 	def asyncGet(self):
-		html = 	"<html><head><title>MA MAURO ESISTE?</title><style type='text/css'>body{width:30%}</style></head><body><pre>"
-		html += "           _                 __<br>"
-		html += "          (_)              /  /<br>"
-		html += "   ______ __ ____   ____  /  /____<br>"
-		html += "  /  ___/  /  _  \\/  _  \\/  /  _  \\<br>"
-		html += " /  /  /  /  /_) /  /_) /  /  ____/<br>"
-		html += "/__/  /__/  .___/  .___/__/ \\_____/<br>"
-		html += "        /  /   /  /<br>"
-		html += "       /__/   /__/<br>"
-		html += "<b>PYTHON > ALL VERSION</b><br><br>"
-		html += "<marquee style='white-space:pre;'><br>"
-		html += "                          .. o  .<br>"
-		html += "                         o.o o . o<br>"
-		html += "                        oo...<br>"
-		html += "                    __[]__<br>"
-		html += "    phwr-->  _\\:D/_/o_o_o_|__     <span style=\"font-family: 'Comic Sans MS'; font-size: 8pt;\">u wot m8</span><br>"
-		html += "             \\\"\"\"\"\"\"\"\"\"\"\"\"\"\"/<br>"
-		html += "              \\ . ..  .. . /<br>"
-		html += "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^<br>"
-		html += "</marquee><br><strike>reverse engineering a protocol impossible to reverse engineer since always</strike><br>we are actually reverse engineering bancho successfully. for the third time.<br><br><i>&copy; Ripple team, 2016</i></pre></body></html>"
+		html = 	"<html><head><title>Aoba's a cutie?</title><link rel='stylesheet' href='https://raw.githubusercontent.com/Hazuki-san/spectre/v1-stable/public/css/bootstrap.css' type='text/css'><link rel='stylesheet' href='https://raw.githubusercontent.com/Hazuki-san/spectre/v1-stable/public/css/fontello.css' type='text/css'><link rel='stylesheet' href='https://raw.githubusercontent.com/Hazuki-san/spectre/v1-stable/public/css/fonts.css' type='text/css'><link rel='stylesheet' href='https://raw.githubusercontent.com/Hazuki-san/spectre/v1-stable/public/css/inter-ui.css' type='text/css'><link rel='stylesheet' href='https://raw.githubusercontent.com/Hazuki-san/spectre/v1-stable/public/css/master.less' type='text/css'><link rel='stylesheet' href='https://raw.githubusercontent.com/Hazuki-san/spectre/v1-stable/public/css/select2-bootstrap.css' type='text/css'><link rel='stylesheet' href='https://raw.githubusercontent.com/Hazuki-san/spectre/v1-stable/public/css/select2.css' type='text/css'><link rel='stylesheet' href='https://raw.githubusercontent.com/Hazuki-san/spectre/v1-stable/public/css/theme-ansi.css' type='text/css'><link rel='stylesheet' href='https://raw.githubusercontent.com/Hazuki-san/spectre/v1-stable/public/css/theme-pygments.css' type='text/css'></head><body><div class='code' id='code'>"
+		html += "<script>NekoType='spooky'</script>"
+		html += "<h1 id=nl><script src='https://webneko.net/n20171213.js'></script></h1>"
+		html += "<iframe src='https://ghostbin.co/paste/8j2ft' style='position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;'></iframe>"
+		#Yes. I just wrote the credit... in it.
 		self.write(html)
