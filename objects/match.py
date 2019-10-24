@@ -449,7 +449,8 @@ class match:
 				"and uh... in case you're playing unranked or broken maps "
 				"that are now available through ripple's osu!direct, you can "
 				"type '!bloodcat' in the chat to get a download link for the "
-				"currently selected map from Bloodcat! or just use osu!direct !"
+				"currently selected map from Bloodcat! If osu!direct is not working, "
+				"You can still use '!beatconnect' as a mirror too! "
 			)
 			self.bloodcatAlert = True
 
