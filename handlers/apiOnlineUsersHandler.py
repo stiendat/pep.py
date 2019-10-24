@@ -14,10 +14,11 @@ class handler(requestsManager.asyncRequestHandler):
 	@sentry.captureTornado
 	def asyncGet(self):
 		statusCode = 400
+		ass = 1
 		data = {"message": "unknown error"}
 		try:
 			# Get online users count
-			data["result"] = int(glob.redis.get("ripple:online_users").decode("utf-8"))
+			data["result"] = int(glob.redis.get("ripple:online_users").decode("utf-8")) - int(ass)
 
 			# Status code and message
 			statusCode = 200
