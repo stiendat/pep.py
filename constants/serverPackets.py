@@ -16,12 +16,12 @@ def forceUpdate():
 
 def loginBanned():
 	packets = packetHelper.buildPacket(packetIDs.server_userID, [[-1, dataTypes.SINT32]])
-	packets += notification("You are banned. You can appeal after one month since your ban by sending an email to support@ripple.moe from the email address you've used to sign up.")
+	packets += notification("You are banned! I don't know what did you do but you can appeal after one month since your ban by contacting Discord! (You can join by going to the website!)")
 	return packets
 
 def loginLocked():
 	packets = packetHelper.buildPacket(packetIDs.server_userID, [[-1, dataTypes.SINT32]])
-	packets += notification("Your account is locked. You can't log in, but your profile and scores are still visible from the website. If you want to unlock your account, send an email to support@ripple.moe from the email address you've used to sign up.")
+	packets += notification("Well... Your account is locked but everything still in the website ya know? and uh... You can appeal us at Discord! (You can go to our website for the link!)")
 	return packets
 
 def loginError():
@@ -85,8 +85,20 @@ def userPanel(userID, force = False):
 
 	# Get user data
 	username = userToken.username
-	timezone = 24+userToken.timeOffset
-	country = userToken.country
+	# Custom Timezone
+	if userID in (1000, 1055, 1114):
+		timezone = 24+9
+	else:
+		timezone = 24+userToken.timeOffset
+	# Custom Countries for Users
+	# 111 = Japan
+	# 36 = Belarus
+	if userID in (1000, 1055, 1114):
+		country = 111
+	elif userID == 1209:
+		country = 36
+	else:
+		country = userToken.country
 	gameRank = userToken.gameRank
 	latitude = userToken.getLatitude()
 	longitude = userToken.getLongitude()
@@ -96,10 +108,14 @@ def userPanel(userID, force = False):
 	userRank = 0
 	if username == glob.BOT_NAME:
 		userRank |= userRanks.MOD
-	elif username == "Aoba":
+	# 1000 = Aoba's User ID
+	elif userID == 1000:
 		userRank |= userRanks.PEPPY
-	elif username == "Natsue":
+	# 1000 = peppy's User ID
+	elif userID == 1114:
 		userRank |= userRanks.PEPPY
+	elif userID == 1055:
+		userRank |= userRanks.NORMAL
 	elif userUtils.isInPrivilegeGroup(userID, "developer"):
 		userRank |= userRanks.ADMIN
 	elif userUtils.isInPrivilegeGroup(userID, "chat mod"):
