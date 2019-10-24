@@ -130,7 +130,10 @@ def handle(tornadoRequest):
 
 		# Get supporter/GMT
 		userGMT = False
-		userSupporter = True
+		if not userUtils.isRestricted(userID):
+			userSupporter = True
+		else:
+			userSupporter = False
 		userTournament = False
 		if responseToken.admin:
 			userGMT = True
