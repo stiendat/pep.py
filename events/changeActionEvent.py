@@ -2,6 +2,7 @@ from common.log import logUtils as log
 from constants import clientPackets
 from constants import serverPackets
 from objects import glob
+from common.constants import mods
 
 def handle(userToken, packetData):
 	# Get usertoken data
@@ -40,11 +41,30 @@ if userToken.matchID != -1 and userToken.actionID != actions.MULTIPLAYING and us
 
 	# Always update action id, text, md5 and beatmapID
 	userToken.actionID = packetData["actionID"]
-	userToken.actionText = packetData["actionText"]
+	#userToken.actionID = packetData["actionText"]
 	userToken.actionMd5 = packetData["actionMd5"]
 	userToken.actionMods = packetData["actionMods"]
 	userToken.beatmapID = packetData["beatmapID"]
 
+	
+	if bool(packetData["actionMods"] & 128) == True:
+		userToken.relaxing = True
+		UserText = packetData["actionText"] + " on Relax"
+		userToken.actionText = UserText
+		userToken.updateCachedStats()
+		if userToken.relaxAnnounce == False:
+			userToken.relaxAnnounce = True
+			userToken.enqueue(serverPackets.notification("You're playing with Relax, we've changed the leaderboard to Relax."))
+	else:
+		UserText = packetData["actionText"]
+		userToken.actionText = UserText
+		userToken.relaxing = False
+		userToken.autobotting = False
+		userToken.updateCachedStats()
+		if userToken.relaxAnnounce == True:
+			userToken.relaxAnnounce = False
+			userToken.enqueue(serverPackets.notification("You've disabled relax. We've changed back to the Regular leaderboard."))
+	glob.db.execute("UPDATE users_stats SET current_status = %s WHERE id = %s", [UserText, userID])
 	# Enqueue our new user panel and stats to us and our spectators
 	recipients = [userToken]
 	if len(userToken.spectators) > 0:
