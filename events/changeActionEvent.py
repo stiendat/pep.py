@@ -59,7 +59,6 @@ if userToken.matchID != -1 and userToken.actionID != actions.MULTIPLAYING and us
 		UserText = packetData["actionText"]
 		userToken.actionText = UserText
 		userToken.relaxing = False
-		userToken.autobotting = False
 		userToken.updateCachedStats()
 		if userToken.relaxAnnounce == True:
 			userToken.relaxAnnounce = False
