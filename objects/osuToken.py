@@ -84,6 +84,10 @@ class token:
 		self.totalScore = 0
 		self.gameRank = 0
 		self.pp = 0
+		
+		# Relax
+		self.relaxing = False
+		self.relaxAnnounce = False
 
 		# Generate/set token
 		if token_ is not None:
@@ -450,16 +454,26 @@ class token:
 		:return:
 		"""
 		stats = userUtils.getUserStats(self.userID, self.gameMode)
+		stats_relax = userUtils.getUserStatsRx(self.userID, self.gameMode)
 		log.debug(str(stats))
+		
 		if stats is None:
 			log.warning("Stats query returned None")
 			return
-		self.rankedScore = stats["rankedScore"]
-		self.accuracy = stats["accuracy"]/100
-		self.playcount = stats["playcount"]
-		self.totalScore = stats["totalScore"]
-		self.gameRank = stats["gameRank"]
-		self.pp = stats["pp"]
+		if self.relaxing == True:
+			self.gameRank = stats_relax["gameRank"]
+			self.pp = stats_relax["pp"]
+			self.rankedScore = stats_relax["rankedScore"]
+			self.accuracy = stats_relax["accuracy"]/100
+			self.playcount = stats_relax["playcount"]
+			self.totalScore = stats_relax["totalScore"]
+		else:
+			self.rankedScore = stats["rankedScore"]
+			self.accuracy = stats["accuracy"]/100
+			self.playcount = stats["playcount"]
+			self.totalScore = stats["totalScore"]
+			self.gameRank = stats["gameRank"]
+			self.pp = stats["pp"]
 
 	def checkRestricted(self):
 		"""
@@ -493,7 +507,7 @@ class token:
 		:return:
 		"""
 		self.restricted = True
-		chat.sendMessage(glob.BOT_NAME, self.username, "Your account is currently in restricted mode. Please visit ripple's website for more information.")
+		chat.sendMessage(glob.BOT_NAME, self.username, "Your account is currently in restricted mode. Please visit Ainu's website for more information.")
 
 	def resetRestricted(self):
 		"""
