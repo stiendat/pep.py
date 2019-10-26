@@ -49,7 +49,10 @@ if userToken.matchID != -1 and userToken.actionID != actions.MULTIPLAYING and us
 	
 	if bool(packetData["actionMods"] & 128) == True:
 		userToken.relaxing = True
-		UserText = packetData["actionText"] + " on Relax"
+		if userToken.actionID in (0, 1, 14):
+			UserText = packetData["actionText"] + "on Relax"
+		else:
+			UserText = packetData["actionText"] + " on Relax"
 		userToken.actionText = UserText
 		userToken.updateCachedStats()
 		if userToken.relaxAnnounce == False:
