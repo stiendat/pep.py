@@ -1,5 +1,5 @@
-## pep.py [![Code Health](https://landscape.io/github/osuripple/pep.py/master/landscape.svg?style=flat)](https://landscape.io/github/osuripple/pep.py/master)
-
+# ⚠️ As of 1st November 2019, this repository has been deprecated and is not used in Ainu's stack anymore. It's left here just for historical reasons.
+## pep.py
 This is Ripple's bancho server but osu!thailand forked edition. It handles:
 - Client login
 - Online users listing and statuses
