@@ -89,34 +89,25 @@ def matchSettings(stream):
 		struct.append(["slot{}Team".format(str(i)), dataTypes.BYTE])
 
 	# Read first part
-	data.append(packetHelper.readPacketData(stream, struct))
+	slotData = packetHelper.readPacketData(stream, struct)
 
 	# Skip userIDs because fuck
-	start = 7+2+1+1+4+4+16+16+len(data[0]["matchName"])+len(data[0]["matchPassword"])+len(data[0]["beatmapMD5"])+len(data[0]["beatmapName"])
-	start += 1 if (data[0]["matchName"] == "") else 2
-	start += 1 if (data[0]["matchPassword"] == "") else 2
-	start += 2	# If beatmap name and MD5 don't change, the client sends \x0b\x00 istead of \x00 only, so always add 2. ...WHY!
-	start += 2
 	for i in range(0,16):
-		s = data[0]["slot{}Status".format(str(i))]
-		if s != slotStatuses.FREE and s != slotStatuses.LOCKED:
-			start += 4
+		s = slotData["slot{}Status".format(str(i))]
+		if s & (4 | 8 | 16 | 32 | 64) > 0:
+			struct.append(["slot{}UserId".format(str(i)), dataTypes.SINT32])
 
 	# Other settings
-	struct = [
+	struct.extend([
 		["hostUserID", dataTypes.SINT32],
 		["gameMode", dataTypes.BYTE],
 		["scoringType", dataTypes.BYTE],
 		["teamType", dataTypes.BYTE],
 		["freeMods", dataTypes.BYTE],
-	]
+	])
 
-	# Read last part
-	data.append(packetHelper.readPacketData(stream[start:], struct, False))
-
-	result = {}
-	for i in data:
-		result.update(i)
+	# Results goes here
+	result = packetHelper.readPacketData(stream, struct)
 	return result
 
 def createMatch(stream):
