@@ -1,4 +1,3 @@
-# ⚠️ As of 1st November 2019, this repository has been deprecated and is not used in Ainu's stack anymore. It's left here just for historical reasons.
 ## pep.py
 This is Ripple's bancho server but osu!thailand forked edition. It handles:
 - Client login
