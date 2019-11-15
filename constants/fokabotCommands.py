@@ -1239,30 +1239,69 @@ def editMap(fro, chan, message): # Edit maps ranking status ingame. // Added by 
 		freezeStatus = 0
 		
 	# Grab beatmapData from db
-	beatmapData = glob.db.fetch("SELECT * FROM beatmaps WHERE beatmap_id = {} LIMIT 1".format(mapID))
+	try:
+		beatmapData = glob.db.fetch("SELECT beatmapset_id, song_name, ranked, blacklisted FROM beatmaps WHERE beatmap_id = {} LIMIT 1".format(mapID))
+	except:
+		return "We could not find that beatmap. Perhaps check you are using the BeatmapID (not BeatmapSetID), and typed it correctly."
 	
 	if mapType == 'set':
-		glob.db.execute("UPDATE beatmaps SET ranked = {}, ranked_status_freezed = {} WHERE beatmapset_id = {} LIMIT 100".format(rankTypeID, freezeStatus, beatmapData["beatmapset_id"]))
+		glob.db.execute(
+			"UPDATE beatmaps SET ranked = {}, ranked_status_freezed = {} WHERE beatmapset_id = {} LIMIT 100".format(
+				rankTypeID, freezeStatus, beatmapData["beatmapset_id"]))
 		if freezeStatus == 1:
-			glob.db.execute("""UPDATE scores s JOIN (SELECT userid, MAX(score) maxscore FROM scores JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5 WHERE beatmaps.beatmap_md5 = (SELECT beatmap_md5 FROM beatmaps 
-							WHERE beatmapset_id = {} LIMIT 1) GROUP BY userid) s2 ON s.score = s2.maxscore AND s.userid = s2.userid SET completed = 3""".format(beatmapData["beatmapset_id"]))
+			glob.db.execute("""UPDATE scores s JOIN (SELECT userid, MAX(score) maxscore FROM scores JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5 WHERE beatmaps.beatmap_md5 = (SELECT beatmap_md5 FROM beatmaps
+					WHERE beatmapset_id = {} LIMIT 1) GROUP BY userid) s2 ON s.score = s2.maxscore AND s.userid = s2.userid SET completed = 3""".format(
+				beatmapData["beatmapset_id"]))
+		typeBM = 'set'
 	elif mapType == 'map':
-		glob.db.execute("UPDATE beatmaps SET ranked = {}, ranked_status_freezed = {} WHERE beatmap_id = {} LIMIT 1".format(rankTypeID, freezeStatus, mapID))
+		glob.db.execute(
+			"UPDATE beatmaps SET ranked = {}, ranked_status_freezed = {} WHERE beatmap_id = {} LIMIT 1".format(
+				rankTypeID, freezeStatus, mapID))
 		if freezeStatus == 1:
-			glob.db.execute("""UPDATE scores s JOIN (SELECT userid, MAX(score) maxscore FROM scores JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5 WHERE beatmaps.beatmap_md5 = (SELECT beatmap_md5 FROM beatmaps 
-							WHERE beatmap_id = {} LIMIT 1) GROUP BY userid) s2 ON s.score = s2.maxscore AND s.userid = s2.userid SET completed = 3""".format(beatmapData["beatmap_id"]))
+			glob.db.execute("""UPDATE scores s JOIN (SELECT userid, MAX(score) maxscore FROM scores JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5 WHERE beatmaps.beatmap_md5 = (SELECT beatmap_md5 FROM beatmaps
+					WHERE beatmap_id = {} LIMIT 1) GROUP BY userid) s2 ON s.score = s2.maxscore AND s.userid = s2.userid SET completed = 3""".format(
+				beatmapData["beatmap_id"]))
+		typeBM = 'beatmap'
 	else:
 		return "Please specify whether it is a set/map. eg: '!map unrank/rank/love set/map 123456'"
 	
-	log.rap(userID, "has {}ed beatmap ({}): {} ({}).".format(rankType, mapType, beatmapData["song_name"], mapID), True)
-	if mapType == 'set':
-		msg = "{} has {}ed beatmap set: [https://osu.ppy.sh/s/{} {}]".format(name, rankType, beatmapData["beatmapset_id"], beatmapData["song_name"])
+	# Announce that YOOOOOOO THIS MAP IS RANKED!!!
+	if rankType == "rank":
+		log.rap(userID, "has {}ed beatmap ({}): {} ({}).".format(rankType, mapType, beatmapData["song_name"], mapID),
+				True)
+		if mapType == 'set':
+			msg = "{} has {}ed beatmap set: [https://osu.ppy.sh/s/{} {}]".format(name, rankType,
+																				beatmapData["beatmapset_id"],
+																				beatmapData["song_name"])
+		else:
+			msg = "{} has {}ed beatmap: [https://osu.ppy.sh/b/{} {}]".format(name, rankType, mapID,
+																			beatmapData["song_name"])
+		glob.db.execute(
+			"UPDATE scores s JOIN (SELECT userid, MAX(score) maxscore FROM scores JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5 WHERE beatmaps.beatmap_md5 = (SELECT beatmap_md5 FROM beatmaps WHERE beatmap_id = {} LIMIT 1) GROUP BY userid) s2 ON s.score = s2.maxscore AND s.userid = s2.userid SET completed = 2".format(
+				beatmapData["beatmap_id"]))
 	else:
-		msg = "{} has {}ed beatmap: [https://osu.ppy.sh/b/{} {}]".format(name, rankType, mapID, beatmapData["song_name"])
+		log.rap(userID, "has {}ed beatmap ({}): {} ({}).".format(rankType, mapType, beatmapData["song_name"], mapID),
+				True)
+		if mapType == 'set':
+			msg = "{} has {}ed beatmap set: [https://osu.ppy.sh/s/{} {}]".format(name, rankType,
+																				beatmapData["beatmapset_id"],
+																				beatmapData["song_name"])
+		else:
+			msg = "{} has {}ed beatmap: [https://osu.ppy.sh/b/{} {}]".format(name, rankType, mapID,
+																			beatmapData["song_name"])
+
+			glob.db.execute(
+				"UPDATE scores s JOIN (SELECT userid, MAX(score) maxscore FROM scores JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5 WHERE beatmaps.beatmap_md5 = (SELECT beatmap_md5 FROM beatmaps WHERE beatmap_id = {} LIMIT 1) GROUP BY userid) s2 ON s.score = s2.maxscore AND s.userid = s2.userid SET completed = 2".format(
+					beatmapData["beatmap_id"]))
 		
 	chat.sendMessage(glob.BOT_NAME, "#ranked", msg)
 	return msg
 
+def postAnnouncement(fro, chan, message): # Post to #announce ingame
+	announcement = ' '.join(message[0:])
+	chat.sendMessage(glob.BOT_NAME, "#announce", announcement)
+	return "Announcement successfully sent."
+	
 def bloodcat(fro, chan, message):
 	try:
 		matchID = getMatchIDFromChannel(chan)
@@ -1349,7 +1388,12 @@ commands = [
 	}, {
 		"trigger": "!help",
 		"response": "Click (here)[https://bigtu.vip/index.php?p=16&id=4] for full command list"
-	}, #{
+	}, {
+		"trigger": "!announce",
+		"syntax": "<announcement>",
+		"privileges": privileges.ADMIN_SEND_ALERTS,
+		"callback": postAnnouncement
+	},	#{
 		#"trigger": "!ask",
 		#"syntax": "<question>",
 		#"callback": ask
@@ -1359,8 +1403,7 @@ commands = [
 		"syntax": "<rank/unrank> <set/map> <ID>",
 		"privileges": privileges.ADMIN_MANAGE_BEATMAPS,
 		"callback": editMap
-	},
-	{
+	}, {
 		"trigger": "!mm00",
 		"callback": mm00
 	}, {
