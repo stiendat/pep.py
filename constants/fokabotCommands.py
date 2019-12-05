@@ -72,13 +72,13 @@ def instantRestart(fro, chan, message):
 def faq(fro, chan, message):
 	# TODO: Unhardcode this
 	messages = {
-		"rules": "Please make sure to check (osu!thailand's rules)[https://bigtu.vip/doc/rules].",
+		"rules": "Please make sure to check (osu!thailand's rules)[https://ainu.pw/doc/rules].",
 		"swearing": "Please don't abuse swearing",
 		"spam": "Please don't spam",
 		"offend": "Please don't offend other players",
 		"github": "(osu!Ainu's Github page!)[https://github.com/osuthailand]",
-		"discord": "(Join Ainu Discord!)[https://discord.gg/cnaDpVY]",
-		"changelog": "Check the (changelog)[https://bigtu.vip/changelog] !",
+		"discord": "(Join Ainu Discord!)[https://discord.gg/Qp3WQU8]",
+		"changelog": "Check the (changelog)[https://ainu.pw/changelog] !",
 		"english": "Please keep this channel in english.",
 		"topic": "Can you please drop the topic and talk about something else?",
 		"lines": "Please try to keep your sentences on a single line to avoid getting silenced."
@@ -1387,7 +1387,7 @@ commands = [
 		"callback": report
 	}, {
 		"trigger": "!help",
-		"response": "Click (here)[https://bigtu.vip/index.php?p=16&id=4] for full command list"
+		"response": "Click (here)[https://ainu.pw/index.php?p=16&id=4] for full command list"
 	}, {
 		"trigger": "!announce",
 		"syntax": "<announcement>",
