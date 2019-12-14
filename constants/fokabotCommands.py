@@ -1301,6 +1301,24 @@ def postAnnouncement(fro, chan, message): # Post to #announce ingame
 	announcement = ' '.join(message[0:])
 	chat.sendMessage(glob.BOT_NAME, "#announce", announcement)
 	return "Announcement successfully sent."
+
+def whitelistUserPPLimit(fro, chan, message):
+	messages = [m.lower() for m in message]
+	target = message[0]
+	relax = message[1]
+
+	userID = userUtils.getID(target)
+
+	if userID == 0:
+		return "That user does not exist."
+
+	if 'x' in relax:
+		rx = True
+	else:
+		rx = False
+
+	userUtils.whitelistUserPPLimit(userID, rx)
+	return "{user} has been whitelisted from autorestrictions on {rx}.".format(user=target, rx='relax' if rx else 'vanilla')
 	
 def bloodcat(fro, chan, message):
 	try:
