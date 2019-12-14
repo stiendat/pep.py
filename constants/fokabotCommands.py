@@ -1407,6 +1407,11 @@ commands = [
 		"trigger": "!help",
 		"response": "Click (here)[https://ainu.pw/index.php?p=16&id=4] for full command list"
 	}, {
+		"trigger": "!whitelist",
+		"privileges": privileges.ADMIN_BAN_USERS,
+		"syntax": "<target> <relax/vanilla>",
+		"callback": whitelistUserPPLimit
+	}, {
 		"trigger": "!announce",
 		"syntax": "<announcement>",
 		"privileges": privileges.ADMIN_SEND_ALERTS,
