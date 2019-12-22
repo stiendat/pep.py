@@ -1304,6 +1304,36 @@ def postAnnouncement(fro, chan, message): # Post to #announce ingame
 	chat.sendMessage(glob.BOT_NAME, "#announce", announcement)
 	return "Announcement successfully sent."
 
+def usePPBoard(fro, chan, message):
+	messages = [m.lower() for m in message]
+	relax = message[0]
+
+	userID = userUtils.getID(fro)
+
+	if 'x' in relax:
+		rx = True
+	else:
+		rx = False
+
+	# Set PPBoard value in user_stats table
+	userUtils.setPPBoard(userID, rx)
+	return "You're using PPBoard in {rx}.".format(rx='relax' if rx else 'vanilla')
+
+def useScoreBoard(fro, chan, message):
+	messages = [m.lower() for m in message]
+	relax = message[0]
+
+	userID = userUtils.getID(fro)
+	
+	if 'x' in relax:
+		rx = True
+	else:
+		rx = False
+
+	# Set PPBoard value in user_stats table
+	userUtils.setScoreBoard(userID, rx)
+	return "You're using Scoreboard in {rx}.".format(rx='relax' if rx else 'vanilla')
+
 def whitelistUserPPLimit(fro, chan, message):
 	messages = [m.lower() for m in message]
 	target = message[0]
@@ -1408,6 +1438,14 @@ commands = [
 	}, {
 		"trigger": "!help",
 		"response": "Click (here)[https://ainu.pw/index.php?p=16&id=4] for full command list"
+	}, {
+		"trigger": "!ppboard",
+		"syntax": "<relax/vanilla>",
+		"callback": usePPBoard
+	}, {
+		"trigger": "!scoreboard",
+		"syntax": "<relax/vanilla>",
+		"callback": useScoreBoard
 	}, {
 		"trigger": "!whitelist",
 		"privileges": privileges.ADMIN_BAN_USERS,
