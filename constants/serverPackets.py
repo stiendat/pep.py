@@ -86,13 +86,13 @@ def userPanel(userID, force = False):
 	# Get user data
 	username = userToken.username
 	# Custom Timezone
-	if userID in (1000):
+	if userID in (1000, 1106):
 		timezone = 24+9
 	else:
 		timezone = 24+userToken.timeOffset
 	# Custom Countries for Users
 	# 111 = Japan
-	if userID in (1000):
+	if userID in (1000, 1106):
 		country = 111
 	else:
 		country = userToken.country
