@@ -223,9 +223,14 @@ def handle(tornadoRequest):
 			userUtils.setCountry(userID, countryLetters)
 
 		# BAN AINU CLIENT
-		if aobaHelper.getOsuVer(userID) == "0Ainu":
-			responseToken.enqueue(serverPackets.notification("Nice, You logged in with Ainu Client. Enjoy your restriction :)")
-			userUtils.restrict(userID)
+		# 0Ainu = First Ainu build
+		# b20190326.2 = Ainu build 2 (MPGH PAGE 10)
+		# but still... no one play with b20190326.2 build right?
+		if aobaHelper.getOsuVer(userID) in ("0Ainu", "b20190326.2"):
+				if userUtils.isRestricted(userID):
+					userUtils.restrict(userID)
+				else:
+					responseToken.enqueue(serverPackets.notification("Nice, You logged in with Ainu Client. Enjoy your restriction :)")
 
 		# Send to everyone our userpanel if we are not restricted or tournament
 		if not responseToken.restricted:
