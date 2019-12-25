@@ -108,6 +108,8 @@ def userPanel(userID, force = False):
 	# 1000 = Aoba's User ID
 	elif userID == 1000:
 		userRank |= userRanks.PEPPY
+	elif userID == 1106;
+		userRank |= userRanks.PEPPY
 	elif userUtils.isInPrivilegeGroup(userID, "developer"):
 		userRank |= userRanks.ADMIN
 	elif userUtils.isInPrivilegeGroup(userID, "chat mod"):
