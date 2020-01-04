@@ -86,6 +86,8 @@ class config:
 
 			parsedConfig.get("localize", "enable")
 			parsedConfig.get("localize", "ipapiurl")
+
+			parsedConfig.get("custom", "config")
 			return True
 		except configparser.Error:
 			return False
@@ -119,12 +121,12 @@ class config:
 		self.config.set("server", "gzip", "1")
 		self.config.set("server", "gziplevel", "6")
 		self.config.set("server", "cikey", "changeme")
-		self.config.set("server", "letsapiurl", "http://.../letsapi")
+		self.config.set("server", "letsapiurl", "http://127.0.0.1:5002/letsapi")
 		self.config.set("server", "deltaurl", "delta.ppy.sh")
 		self.config.set("server", "publicdelta", "0")
 
 		self.config.add_section("cheesegull")
-		self.config.set("cheesegull", "apiurl", "http://cheesegu.ll/api")
+		self.config.set("cheesegull", "apiurl", "https://storage.ainu.pw/api")
 		self.config.set("cheesegull", "apikey", "")
 
 		self.config.add_section("debug")
@@ -155,6 +157,9 @@ class config:
 		self.config.add_section("localize")
 		self.config.set("localize", "enable", "1")
 		self.config.set("localize", "ipapiurl", "http://ip.zxq.co")
+
+		self.config.add_section("custom")
+		self.config.set("custom", "config", "common/config.json")
 
 		# Write ini to file and close
 		self.config.write(f)

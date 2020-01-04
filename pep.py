@@ -9,6 +9,9 @@ import tornado.web
 from raven.contrib.tornado import AsyncSentryClient
 import redis
 
+import json
+import shutil
+
 from common import generalUtils, agpl
 from common.constants import bcolors
 from common.db import dbConnector
@@ -85,6 +88,23 @@ if __name__ == "__main__":
 			sys.exit()
 		else:
 			consoleHelper.printDone()
+
+		# Read additional config file
+		consoleHelper.printNoNl("> Loading additional config file... ")
+		try:
+			if not os.path.isfile(glob.conf.config["custom"]["config"]):
+				consoleHelper.printWarning()
+					consoleHelper.printColored("[!] Missing config file at {}; A default one has been generated at this location.".format(glob.conf.config["custom"]["config"]), bcolors.YELLOW)
+				shutil.copy("common/default_config.json", glob.conf.config["custom"]["config"])
+
+			with open(glob.conf.config["custom"]["config"], "r") as f:
+				glob.conf.extra = json.load(f)
+
+			consoleHelper.printDone()
+		except:
+			consoleHelper.printWarning()
+			consoleHelper.printColored("[!] Unable to load custom config at {}".format(glob.conf.config["custom"]["config"]), bcolors.RED)
+			sys.exit()
 
 		# Create data folder if needed
 		consoleHelper.printNoNl("> Checking folders... ")
