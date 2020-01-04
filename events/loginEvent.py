@@ -7,6 +7,7 @@ from common.log import logUtils as log
 from common.ripple import userUtils
 from constants import exceptions
 from constants import serverPackets
+from helpers import aobaHelper
 from helpers import chatHelper as chat
 from helpers import countryHelper
 from helpers import locationHelper
@@ -220,6 +221,17 @@ def handle(tornadoRequest):
 		# Set country in db if user has no country (first bancho login)
 		if userUtils.getCountry(userID) == "XX":
 			userUtils.setCountry(userID, countryLetters)
+
+		# BAN AINU CLIENT
+		# 0Ainu = First Ainu build
+		# b20190326.2 = Ainu build 2 (MPGH PAGE 10)
+		# but still... no one play with b20190326.2 build right?
+
+		if aobaHelper.getOsuVer(userID) in ["0Ainu", "b20190326.2"]:
+			if userUtils.isRestricted(userID):
+				responseToken.enqueue(serverPackets.notification("You're banned because you're currently using Ainu Client. Enjoy your restriction :)"))
+			else:
+				userUtils.restrict(userID)
 
 		# Send to everyone our userpanel if we are not restricted or tournament
 		if not responseToken.restricted:

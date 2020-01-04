@@ -20,6 +20,7 @@ from common.log import logUtils as log
 from common.redis import pubSub
 from common.web import schiavo
 from handlers import apiFokabotMessageHandler
+from handlers import apiGetTheFuckOuttaHere
 from handlers import apiIsOnlineHandler
 from handlers import apiOnlineUsersHandler
 from handlers import apiServerStatusHandler
@@ -53,6 +54,7 @@ def make_app():
 		(r"/api/v1/ciTrigger", ciTriggerHandler.handler),
 		(r"/api/v1/verifiedStatus", apiVerifiedStatusHandler.handler),
 		(r"/api/v1/fokabotMessage", apiFokabotMessageHandler.handler),
+		(r"/api/v2/clients/.*", apiGetTheFuckOuttaHere.handler),
 		(r"/stress", heavyHandler.handler)
 	])
 
