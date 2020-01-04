@@ -96,7 +96,7 @@ if __name__ == "__main__":
 		try:
 			if not os.path.isfile(glob.conf.config["custom"]["config"]):
 				consoleHelper.printWarning()
-					consoleHelper.printColored("[!] Missing config file at {}; A default one has been generated at this location.".format(glob.conf.config["custom"]["config"]), bcolors.YELLOW)
+				consoleHelper.printColored("[!] Missing config file at {}; A default one has been generated at this location.".format(glob.conf.config["custom"]["config"]), bcolors.YELLOW)
 				shutil.copy("common/default_config.json", glob.conf.config["custom"]["config"])
 
 			with open(glob.conf.config["custom"]["config"], "r") as f:
