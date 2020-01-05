@@ -225,13 +225,16 @@ def handle(tornadoRequest):
 		# BAN AINU CLIENT
 		# 0Ainu = First Ainu build
 		# b20190326.2 = Ainu build 2 (MPGH PAGE 10)
+		# b20191223.3 = Unknown Ainu Build
+		# b20190401.22f56c084ba339eefd9c7ca4335e246f80 = Unknown Ainu Build 2
 		# but still... no one play with b20190326.2 build right?
 
-		if aobaHelper.getOsuVer(userID) in ["0Ainu", "b20190326.2"]:
-			if userUtils.isRestricted(userID):
-				responseToken.enqueue(serverPackets.notification("You're banned because you're currently using Ainu Client. Enjoy your restriction :)"))
-			else:
-				userUtils.restrict(userID)
+		if glob.conf.extra["mode"]["anticheat"]:
+			if aobaHelper.getOsuVer(userID) in ["0Ainu", "b20190326.2", "b20190401.22f56c084ba339eefd9c7ca4335e246f80", "b20191223.3"]:
+				if userUtils.isRestricted(userID):
+					responseToken.enqueue(serverPackets.notification("You're banned because you're currently using Ainu Client. Enjoy your restriction :)"))
+				else:
+					userUtils.restrict(userID)
 
 		# Send to everyone our userpanel if we are not restricted or tournament
 		if not responseToken.restricted:
