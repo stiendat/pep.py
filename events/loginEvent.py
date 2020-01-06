@@ -230,7 +230,13 @@ def handle(tornadoRequest):
 		# but still... no one play with b20190326.2 build right?
 
 		if glob.conf.extra["mode"]["anticheat"]:
-			if aobaHelper.getOsuVer(userID) in ["0Ainu", "b20190326.2", "b20190401.22f56c084ba339eefd9c7ca4335e246f80", "b20191223.3"]:
+			# Check Ainu New Year 2020 Client
+			if tornadoRequest.request.headers.get("ainu") == "happy":
+				if userUtils.isRestricted(userID):
+					responseToken.enqueue(serverPackets.notification("You're banned because you're currently using Ainu Client... Happy New Year 2020 and Enjoy your restriction :)"))
+				else:
+					userUtils.restrict(userID)
+			elif aobaHelper.getOsuVer(userID) in ["0Ainu", "b20190326.2", "b20190401.22f56c084ba339eefd9c7ca4335e246f80", "b20191223.3"]:
 				if userUtils.isRestricted(userID):
 					responseToken.enqueue(serverPackets.notification("You're banned because you're currently using Ainu Client. Enjoy your restriction :)"))
 				else:
