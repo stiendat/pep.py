@@ -257,29 +257,6 @@ def handle(tornadoRequest):
 		if userUtils.getCountry(userID) == "XX":
 			userUtils.setCountry(userID, countryLetters)
 
-<<<<<<< HEAD
-=======
-		# BAN AINU CLIENT
-		# 0Ainu = First Ainu build
-		# b20190326.2 = Ainu build 2 (MPGH PAGE 10)
-		# b20191223.3 = Unknown Ainu Build
-		# b20190401.22f56c084ba339eefd9c7ca4335e246f80 = Unknown Ainu Build 2
-		# but still... no one play with b20190326.2 build right?
-
-		if glob.conf.extra["mode"]["anticheat"]:
-			# Check Ainu New Year 2020 Client
-			if tornadoRequest.request.headers.get("ainu") == "happy":
-				if userUtils.isRestricted(userID):
-					responseToken.enqueue(serverPackets.notification("You're banned because you're currently using Ainu Client... Happy New Year 2020 and Enjoy your restriction :)"))
-				else:
-					userUtils.restrict(userID)
-			elif aobaHelper.getOsuVer(userID) in ["0Ainu", "b20190326.2", "b20190401.22f56c084ba339eefd9c7ca4335e246f80", "b20191223.3"]:
-				if userUtils.isRestricted(userID):
-					responseToken.enqueue(serverPackets.notification("You're banned because you're currently using Ainu Client. Enjoy your restriction :)"))
-				else:
-					userUtils.restrict(userID)
-
->>>>>>> 8b3759940309d799e3ee28bb7473450bb93629d7
 		# Send to everyone our userpanel if we are not restricted or tournament
 		if not responseToken.restricted:
 			glob.streams.broadcast("main", serverPackets.userPanel(userID))
