@@ -28,7 +28,9 @@ def loginError():
 	return packetHelper.buildPacket(packetIDs.server_userID, [[-5, dataTypes.SINT32]])
 
 def loginCheats():
+	message = "You better quit cheating! >_< ~Aoba"
 	packets = packetHelper.buildPacket(packetIDs.server_userID, [[-1, dataTypes.SINT32]])
+	packets += packetHelper.buildPacket(0x69, [[message, dataTypes.STRING]])
 	packets += notification("Please... don't login with cheats client... Play on cheating server instead of cheating on our server. Thank you.")
 	return packets
 
