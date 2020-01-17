@@ -24,11 +24,6 @@ def loginLocked():
 	packets += notification("Well... Your account is locked but everything still in the website ya know? and uh... You can appeal us at Discord! (You can go to our website for the link!)")
 	return packets
 
-def loginCheats():
-	packets = packetHelper.buildPacket(packetIDs.server_userID, [[-1, dataTypes.SINT32]])
-	packets += notification("Please... don't login with cheats client... Play on cheating server instead of cheating on our server. Thank you.")
-	return packets
-
 def loginError():
 	return packetHelper.buildPacket(packetIDs.server_userID, [[-5, dataTypes.SINT32]])
 
