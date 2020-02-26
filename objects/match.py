@@ -399,6 +399,7 @@ class match:
 			"beatmap_id": self.beatmapID,
 			"mods": self.mods,
 			"game_mode": self.gameMode,
+			"isTourney": self.isTourney,
 			"scores": {}
 		}
 
@@ -415,6 +416,9 @@ class match:
 
 		# Send the info to the api
 		glob.redis.publish("api:mp_complete_match", json.dumps(infoToSend))
+		# If match in tournament sent info to api
+		if self.isTourney:
+			glob.redis.publish("api:mp_complete_tour_match", json.dumps(infoToSend))
 
 		# Reset inProgress
 		self.inProgress = False
@@ -439,9 +443,9 @@ class match:
 		chanName = "#multi_{}".format(self.matchID)
 		if self.vinseID is None:
 			self.vinseID = (int(time.time()) // (60 * 15)) << 32 | self.matchID
-			chat.sendMessage(glob.BOT_NAME, chanName, "Match history available [{} here]".format(
-				"https://multi.bigtu.vip/match/{}".format(self.vinseID)
-			))
+			# chat.sendMessage(glob.BOT_NAME, chanName, "Match history available [{} here]".format(
+			# 	"https://multi.bigtu.vip/match/{}".format(self.vinseID)
+			# ))
 		if not self.bloodcatAlert:
 			chat.sendMessage(
 				glob.BOT_NAME,

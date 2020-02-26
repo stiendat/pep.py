@@ -44,6 +44,10 @@ from pubSubHandlers import notificationHandler
 from pubSubHandlers import updateSilenceHandler
 from pubSubHandlers import updateStatsHandler
 
+from v2_handlers import apiListMultiplayerMatches
+from v2_handlers import apiCreateMultiplayerMatch
+from v2_handlers import apiDisposeMultiplayerMatch
+from v2_handlers import apiManageMultiplayerMatch
 
 def make_app():
 	return tornado.web.Application([
@@ -55,7 +59,11 @@ def make_app():
 		(r"/api/v1/verifiedStatus", apiVerifiedStatusHandler.handler),
 		(r"/api/v1/fokabotMessage", apiFokabotMessageHandler.handler),
 		(r"/api/v2/clients/.*", apiGetTheFuckOuttaHere.handler),
-		(r"/stress", heavyHandler.handler)
+		(r"/stress", heavyHandler.handler),
+		(r"/api/v2/multiplayer", apiListMultiplayerMatches.handler),
+		(r"/api/v2/multiplayer/create", apiCreateMultiplayerMatch.handler),
+		(r"/api/v2/multiplayer/close", apiDisposeMultiplayerMatch.handler),
+		(r"/api/v2/multiplayer/manage", apiManageMultiplayerMatch.handler)
 	])
 
 

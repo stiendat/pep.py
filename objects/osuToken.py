@@ -30,9 +30,11 @@ class token:
 		self.username = userUtils.getUsername(self.userID)
 		self.safeUsername = userUtils.getSafeUsername(self.userID)
 		self.privileges = userUtils.getPrivileges(self.userID)
-		self.admin = userUtils.isInPrivilegeGroup(self.userID, "developer")\
-					 or userUtils.isInPrivilegeGroup(self.userID, "community manager")\
-					 or userUtils.isInPrivilegeGroup(self.userID, "chat mod")
+		self.admin = userUtils.isInPrivilegeGroup(self.userID, "Developer")\
+					 or userUtils.isInPrivilegeGroup(self.userID, "Community Manager")\
+					 or userUtils.isInPrivilegeGroup(self.userID, "Chat Moderators")\
+					 or userUtils.isInPrivilegeGroup(self.userID, "Admin")\
+					 or userUtils.isInPrivilegeGroup(self.userID, "Owner")
 		self.irc = irc
 		self.kicked = False
 		self.restricted = userUtils.isRestricted(self.userID)
@@ -71,7 +73,7 @@ class token:
 		else:
 			self.actionID = actions.IDLE
 		if userID == 1000:
-			self.actionText = "HentaiHaven"
+			self.actionText = "You <3"
 		else:
 			self.actionText = ""
 		self.actionMd5 = ""
