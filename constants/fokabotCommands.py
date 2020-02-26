@@ -2,6 +2,7 @@ import json
 import random
 import re
 import threading
+import uuid
 
 import requests
 import time
@@ -74,7 +75,7 @@ def faq(fro, chan, message):
 	messages = {
 		"rules": "Please make sure to check (osu!thailand's rules)[https://ainu.pw/doc/rules].",
 		"swearing": "Please don't abuse swearing",
-		"spam": "Please don't spam",
+		"spam": "xin dung spam",
 		"offend": "Please don't offend other players",
 		"github": "(osu!Ainu's Github page!)[https://github.com/osuthailand]",
 		"discord": "(Join Ainu Discord!)[https://discord.gg/Qp3WQU8]",
@@ -1414,7 +1415,65 @@ def mirror(fro, chan, message):
 			return "The spectator host is offline."
 		beatmapID = spectatorHostToken.beatmapID
 	return mirrorMessage(beatmapID)
-	
+
+def changeUserName(userID, name):
+	glob.db.execute(
+		"UPDATE `users` SET `username` = '{}', `username_safe` = '{}' WHERE `users`.`id` = {};".format(name, name.lower(), userID)
+	)
+	glob.db.execute(
+		"UPDATE `users_stats` SET `username` = '{}' WHERE `users_stats`.`id` = {};".format(name, userID)
+	)
+	glob.db.execute(
+		"UPDATE `rx_stats` SET `username` = '{}' WHERE `rx_stats`.`id` = {};".format(name, userID)
+	)
+
+def changeme(fro, chan, message):
+	userID = userUtils.getID(fro)
+	isDonor = userUtils.isInPrivilegeGroup(userID, 'Donor')
+	name = message[0]
+	dateDiff = glob.db.fetch(
+		"SELECT DATEDIFF(CURRENT_TIMESTAMP, `last_change`) AS DATEDIFF FROM `name_change_log` WHERE `userid` = '{}'".format(userID)
+	)
+	cooldownTime = 14
+
+	if isDonor:
+		try:
+			if (dateDiff is None):
+				changeUserName(userID, name)
+				glob.db.execute(
+					"INSERT INTO `name_change_log` (`userid`, `last_change`, `changeid`) VALUES ('{}', CURRENT_TIMESTAMP, NULL);".format(userID)
+				)
+				return "Your username has been updated. Please login again."
+			elif (int(dateDiff['DATEDIFF']) >= cooldownTime):
+				changeUserName(userID, name)
+				glob.db.execute(
+					"UPDATE `name_change_log` SET `last_change` = CURRENT_TIMESTAMP WHERE `name_change_log`.`userid` = {}".format(userID)
+				)
+				return "Your username has been updated. Please login again."
+			else:
+				return "Not so soon mate. You can change your username after {} days".format(cooldownTime)
+		except Exception as err:
+                    return "Something wrong happens. Please report to owner."
+	else:
+		return "Uh oh it seems like you are not Donor yet. Dua 50k day thi cho doi ten."
+
+def linkdiscord(fro, chan, message):
+	userID = userUtils.getID(fro)
+	verify_id = str(uuid.uuid4().int)
+	query = glob.db.execute(
+		"SELECT `discordid`, `verify_id` FROM `discord_roles` WHERE `userid` = '{}';".format(userID)
+	)
+	if query and query['discordid']:
+		return "Your account is already linked to discord"
+	elif query and query['verify_id']:
+		return "You are in the middle of linking process. Use !linkosu {} in discord chat to finish the process.".format(query['verify_id'])
+	else:
+		glob.db.execute(
+			"INSERT INTO `discord_roles` (`id`, `userid`, `discordid`, `verify_id`) VALUES (NULL, '{}', NULL, '{}');".format(userID, verify_id)
+		)
+		return "To finish the linking process join discord server and use !linkosu {} to finish the process.".format(verify_id)
+
+
 """
 Commands list
 
@@ -1437,7 +1496,7 @@ commands = [
 		"callback": report
 	}, {
 		"trigger": "!help",
-		"response": "Click (here)[https://ainu.pw/index.php?p=16&id=4] for full command list"
+		"response": "Not now dude. We are writing docs now so be patient."
 	}, {
 		"trigger": "!ppboard",
 		"syntax": "<relax/vanilla>",
@@ -1593,7 +1652,14 @@ commands = [
 	}, {
 		"trigger": "!beatconnect",
 		"callback": beatconnect
-	}
+	}, {
+                "trigger": "!changeme",
+                "syntax": "<new_username>",
+                "callback": changeme
+        }, {
+                "trigger": "!linkdiscord",
+                "callback": linkdiscord
+        }
 	#
 	#	"trigger": "!acc",
 	#	"callback": tillerinoAcc,
