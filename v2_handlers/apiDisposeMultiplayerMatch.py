@@ -31,6 +31,7 @@ class handler(requestsManager.asyncRequestHandler):
 
             matchID = self.get_argument('matchID')
             glob.matches.disposeMatch(int(matchID))
+            response['message'] = 'Success'
             statusCode = 200
 
         except exceptions.invalidArgumentsException:

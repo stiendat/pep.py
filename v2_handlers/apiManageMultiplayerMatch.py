@@ -9,11 +9,14 @@ from constants import exceptions
 from helpers import chatHelper
 from objects import glob
 
+from urllib.request import urlopen
+
 class handler(requestsManager.asyncRequestHandler):
     @tornado.web.asynchronous
     @tornado.gen.engine
     @sentry.captureTornado
     def asyncGet(self):
+        statusCode = 400
         response = {"message": "unknow error"}
         try:
             # Check args
@@ -40,20 +43,11 @@ class handler(requestsManager.asyncRequestHandler):
                 'scorev': '!mp scorev ',
                 'set': '!mp set ',
                 'team': '!mp team ',
-                'kick': '!mp kick',
+                'kick': '!mp kick ',
                 'start': '!mp start',
                 'abort': '!mp abort',
                 'close': '!mp close'
             }
-
-            # Get args for subcommand
-            user = self.get_argument('user')
-            slot = self.get_argument('slot')
-            beatmapID = self.get_argument('beatmapID')
-            mods = self.get_arguments('mod')
-            scorev = self.get_argument('scorev')
-            gameMode = self.get_argument('mode')
-            teamColor = self.get_argument('teamColor')
 
             # Main msg for Fokabot
             msg = available_commands.get(command, None)
@@ -63,12 +57,15 @@ class handler(requestsManager.asyncRequestHandler):
                 response['message'] = 'Bad command'
                 raise exceptions.invalidArgumentsException()
             elif command == 'invite':
+                user = self.get_argument('user')
                 if user is None:
                     response['message'] = 'Missing username'
                     raise exceptions.invalidArgumentsException()
                 else:
                     msg = msg + user
             elif command == 'move':
+                user = self.get_argument('user')
+                slot = self.get_argument('slot')
                 if user is None:
                     response['message'] = 'Missing username'
                     raise exceptions.invalidArgumentsException()
@@ -78,12 +75,14 @@ class handler(requestsManager.asyncRequestHandler):
                 else:
                     msg = msg + user + ' ' + slot
             elif command == 'map':
+                beatmapID = self.get_argument('beatmapID')
                 if beatmapID is None:
                     response['message'] = 'Missing beatmapID'
                     raise exceptions.invalidArgumentsException()
                 else:
                     msg = msg + beatmapID
             elif command == 'mods':
+                mods = self.get_arguments('mod')
                 if mods is None:
                     response['message'] = 'Missing mod'
                     raise exceptions.invalidArgumentsException()
@@ -91,12 +90,14 @@ class handler(requestsManager.asyncRequestHandler):
                     for mod in mods:
                         msg = msg + mod + ' '
             elif command == 'scorev':
+                scorev = self.get_argument('scorev')
                 if scorev is None:
                     response['message'] = 'Missing score version (scorev)'
                     raise exceptions.invalidArgumentsException()
                 else:
                     msg = msg + scorev
             elif command == 'set':
+                gameMode = self.get_argument('mode')
                 if gameMode is None:
                     response['message'] = 'Missing game type. Only support h2h and teamvs'
                     raise exceptions.invalidArgumentsException()
@@ -108,6 +109,8 @@ class handler(requestsManager.asyncRequestHandler):
                     response['message'] = 'Not supported game type'
                     raise exceptions.invalidArgumentsException()
             elif command == 'team':
+                user = self.get_argument('user')
+                teamColor = self.get_argument('teamColor')
                 if user is None:
                     response['message'] = 'Missing username'
                     raise exceptions.invalidArgumentsException()
@@ -121,10 +124,17 @@ class handler(requestsManager.asyncRequestHandler):
                 else:
                     response['message'] = 'Bad team color. Only support red and blue'
                     raise exceptions.invalidArgumentsException()
-
-            chatHelper.sendMessage(glob.BOT_NAME, channel.encode().decode("ASCII", "ignore"), msg)
+            elif command == 'kick':
+                user = self.get_argument('user')
+                if user is None:
+                    response['message'] = 'Missing username'
+                    raise exceptions.invalidArgumentsException()
+            
+            with urlopen('http://localhost:5001/api/v1/fokabotMessage?k={}&to=%23multi_{}&msg={}'.format(glob.conf.config['server']['cikey'], matchID, msg.replace('!', '%21').replace(' ', '%20'))) as req:
+                req = req.read()
+            #chatHelper.sendMessage(glob.BOT_NAME, channel.encode().decode("ASCII", "ignore"), msg.encode().decode("ASCII", "ignore"))
             statusCode = 200
-            response['message'] = 'Success'
+            response = req.decode('ASCII')
 
         except exceptions.invalidArgumentsException:
             statusCode = 400

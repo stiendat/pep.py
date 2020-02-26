@@ -8,6 +8,7 @@ from common.web import requestsManager
 from constants import exceptions
 from objects import glob
 from common.constants.gameModes import getGameModeForMatchAPI
+from common import generalUtils
 
 class handler(requestsManager.asyncRequestHandler):
     @tornado.web.asynchronous
@@ -21,7 +22,7 @@ class handler(requestsManager.asyncRequestHandler):
 
         try:
             # Check args
-            if not requestsManager.checkArguments(self.request.arguments, ['k', 'matchName', 'matchPassword', 'beatmapID', 'beatmapName', 'beatmapMD5', 'gameMode', 'isTourney']):
+            if not requestsManager.checkArguments(self.request.arguments, ['k', 'matchName', 'gameMode', 'isTourney']):
                 raise exceptions.invalidArgumentsException()
 
             # Check ci key
@@ -31,10 +32,6 @@ class handler(requestsManager.asyncRequestHandler):
                 raise exceptions.invalidArgumentsException()
             
             matchName = self.get_argument('matchName')
-            matchPassword = self.get_argument('matchPassword')
-            beatmapID = self.get_argument('beatmapID')
-            beatmapName = self.get_argument('beatmapName')
-            beatmapMD5 = self.get_argument('beatmapMD5')
             gameMode = getGameModeForMatchAPI(self.get_argument('gameMode'))
             isTourney = self.get_argument('isTourney')
 
@@ -50,12 +47,12 @@ class handler(requestsManager.asyncRequestHandler):
                 response['message'] = 'Oh my we only accepts gameMode std, taiko, ctb and mania'
                 raise exceptions.invalidArgumentsException()
 
-            matchID = glob.matches.createMatch(matchName, matchPassword, beatmapID, beatmapName, beatmapMD5, gameMode, 999, isTourney)
+            matchID = glob.matches.createMatch(matchName, generalUtils.stringMd5(generalUtils.randomString(32)), 0, "Tournament", "", gameMode, -1, isTourney=isTourney)
             glob.matches.matches[matchID].sendUpdates()
             response = {
                 "matchID": matchID
             }
-
+            statusCode = 200
         except exceptions.invalidArgumentsException:
             statusCode = 400
         
